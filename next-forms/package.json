@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "vercel-build": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -33,5 +34,8 @@
     "prisma": "^6.19.1",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22.22.0 <23.0.0"
   }
 }
