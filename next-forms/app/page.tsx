@@ -61,6 +61,20 @@ export default async function TopPage() {
 
   return (
     <>
+      <div className="flex justify-center">
+        {session?.user ? (
+          <Link
+            href="/forms/new"
+            className="my-3 mx-1 p-3 rounded-full bg-rose-600 text-white hover:bg-rose-700 transition cursor-pointer"
+          >
+            アンケートフォームを作成する
+          </Link>
+        ) : (
+          <p className="m-5 text-md">
+            アンケートフォームを作成するにはログインが必要です
+          </p>
+        )}
+      </div>
       {formCards}
     </>
   );

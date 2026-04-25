@@ -3,8 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify/unstyled';
 
 import { saveAnswersAction } from '@/actions/saveAnswersAction';
+import stopSubmit from '@/lib/stopSubmit';
 import { AnswerFormType, answerFormSchema } from '@/schemas/answerSchema';
 
 type Props = {
@@ -30,7 +32,7 @@ export default function AnswerForm(props: Props) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<AnswerFormType>({
     resolver: zodResolver(answerFormSchema),
     defaultValues: {
@@ -57,10 +59,10 @@ export default function AnswerForm(props: Props) {
           errorMessage = '回答の送信に失敗しました。';
           break;
       }
-      console.error(errorMessage);
+      toast.error(errorMessage);
       router.push('/');
     } else {
-      console.log('回答を送信しました。');
+      toast.success('回答を送信しました。');
       router.push(`/forms/${form.formId}/responses`);
     }
   };
@@ -128,7 +130,7 @@ export default function AnswerForm(props: Props) {
 
   return (
     <div className="justify-center">
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} onKeyDown={stopSubmit}>
         <h1 className="text-lg">{form.formTitle}</h1>
         <p>{form.description}</p>
         <p className="pt-4">作成者：{form.createdBy}</p>
@@ -140,6 +142,7 @@ export default function AnswerForm(props: Props) {
         <button
           type="submit"
           className="w-full text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-20 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
+          disabled={isSubmitting}
         >
           回答を送信する
         </button>

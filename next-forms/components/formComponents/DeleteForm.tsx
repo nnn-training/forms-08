@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify/unstyled';
 
 import deleteFormAction from '@/actions/deleteFormAction';
 
@@ -31,9 +32,9 @@ export default function DeleteForm({
           errorMessage = 'フォームの削除に失敗しました。';
           break;
       }
-      console.error(errorMessage);
+      toast.error(errorMessage);
     } else {
-      console.log('フォームを削除しました。');
+      toast.success('フォームを削除しました。');
     }
     router.push('/');
   };

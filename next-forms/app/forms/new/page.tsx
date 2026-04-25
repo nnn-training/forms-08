@@ -3,9 +3,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { toast } from 'react-toastify/unstyled';
 
 import { createFormAction } from '@/actions/createFormAction';
 import QuestionItem from '@/components/formComponents/QuestionItem';
+import stopSubmit from '@/lib/stopSubmit';
 import { createFormSchema, CreateFormType } from '@/schemas/createSchema';
 
 export default function CreatePage() {
@@ -29,7 +31,7 @@ export default function CreatePage() {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = methods;
 
   // 配列のフォーム(質問事項)を定義
@@ -68,10 +70,10 @@ export default function CreatePage() {
           errorMessage = 'フォームの作成に失敗しました。';
           break;
       }
-      console.error(errorMessage);
+      toast.error(errorMessage);
       router.push('/');
     } else {
-      console.log('フォームを作成しました。');
+      toast.success('フォームを作成しました。');
       router.push(`/forms/${result.formId}`);
     }
   };
@@ -79,7 +81,7 @@ export default function CreatePage() {
   return (
     <FormProvider {...methods}>
       <div className="mt-10">
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} onKeyDown={stopSubmit}>
           <div>
             <h5>フォームのタイトル</h5>
             <input
@@ -133,6 +135,7 @@ export default function CreatePage() {
           <button
             className="w-full text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-20 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700"
             type="submit"
+            disabled={isSubmitting}
           >
             フォームをつくる
           </button>

@@ -3,10 +3,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { toast } from 'react-toastify/unstyled';
 
 import editFormAction from '@/actions/editFormAction';
 import EditChoices from '@/components/formComponents/editForm/EditChoices';
 import QuestionItem from '@/components/formComponents/QuestionItem';
+import stopSubmit from '@/lib/stopSubmit';
 import { EditFormType, editFormSchema } from '@/schemas/editSchema';
 
 import type { Form, Question } from '@prisma/client';
@@ -33,7 +35,7 @@ export default function EditForm(props: CurrentFormProps) {
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = methods;
 
   const onSubmit = async (data: EditFormType) => {
@@ -57,10 +59,10 @@ export default function EditForm(props: CurrentFormProps) {
           errorMessage = 'フォームの編集に失敗しました。';
           break;
       }
-      console.error(errorMessage);
+      toast.error(errorMessage);
       router.push('/');
     } else {
-      console.log('フォームを編集しました。');
+      toast.success('フォームを編集しました。');
       router.push(`/forms/${result.formId}`);
     }
   };
@@ -90,6 +92,7 @@ export default function EditForm(props: CurrentFormProps) {
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit(onSubmit)}
+        onKeyDown={stopSubmit}
         className="mt-10"
       >
         <h5>フォームのタイトル</h5>
@@ -142,6 +145,7 @@ export default function EditForm(props: CurrentFormProps) {
         <button
           className="w-full text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 mt-20 bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700"
           type="submit"
+          disabled={isSubmitting}
         >
           この内容でフォームを編集する
         </button>
